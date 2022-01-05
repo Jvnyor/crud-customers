@@ -38,16 +38,10 @@ public class CustomerImpl implements CustomerService {
 	@Override
 	public Customer save(CustomerDTO customerDTO) {
 		// TODO Auto-generated method stub
-		if (cpfExist(customerDTO.getCpf())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cpf already exist");
-		} else if (customerDTO.getCpf().length() != 11) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF format are incorrect");
-		} else if (!stringIsNumeric(customerDTO.getCpf())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF format are incorrect");
-		} else if (customerDTO.getName().length()<10) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"FIRST NAME, MIDDLE NAME AND LAST NAME");
-		} else if (!stringIsCharacter(customerDTO.getName())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name format are incorrect");
+		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11 || !stringIsNumeric(customerDTO.getCpf())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		} else if (customerDTO.getName().length()<5 || !stringIsCharacter(customerDTO.getName())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		} else {
 			return customerRepository.save(customerDTO.toEntity());
 		}
@@ -56,10 +50,8 @@ public class CustomerImpl implements CustomerService {
 	@Override
 	public Customer replace(CustomerDTO customerDTO) {
 		// TODO Auto-generated method stub
-		if (!stringIsCharacter(customerDTO.getName())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name format are incorrect");
-		} else if (customerDTO.getName().length()<10) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"FIRST NAME, MIDDLE NAME AND LAST NAME");
+		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length()<10) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		} else {
 			return customerRepository.save(customerDTO.toEntity());
 		}

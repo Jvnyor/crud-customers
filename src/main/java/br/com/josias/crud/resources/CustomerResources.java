@@ -26,10 +26,12 @@ import br.com.josias.crud.model.dto.CustomerDTO;
 import br.com.josias.crud.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Tag(name = "CRUD Customers")
+@Tag(name = "crud-customers")
 @RequestMapping("/customers")
+@Slf4j
 public class CustomerResources {
 
 	@Autowired
@@ -50,7 +52,9 @@ public class CustomerResources {
 	@GetMapping("/find/{cpf}")
 	@Operation(summary="Find customer by CPF",description="Find customer by CPF",tags="{customer}")
 	public ResponseEntity<Customer> findCustomerByCpf(@PathVariable String cpf) {
-		return ResponseEntity.ok(customerService.findById(cpf));
+		Customer customer = customerService.findById(cpf);
+		log.info("Customer by ID: {}",customer);
+		return ResponseEntity.ok(customer);
 	}
 	
 	@GetMapping("/find")
@@ -63,12 +67,14 @@ public class CustomerResources {
 	@Transactional
 	@Operation(summary="Create customers",description="create customers (have cpf verification)",tags="{customer}")
 	public ResponseEntity<Customer> createCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
+		log.info("Customer saved: {}",customerDTO);
 		return new ResponseEntity<>(customerService.save(customerDTO), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/replace")
 	@Operation(summary="Replace customers",description="replace customers (have cpf verification)",tags="{customer}")
 	public ResponseEntity<Customer> replaceCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
+		log.info("Customer replaced: {}",customerDTO);
 		return ResponseEntity.ok(customerService.replace(customerDTO));
 	}
 	
