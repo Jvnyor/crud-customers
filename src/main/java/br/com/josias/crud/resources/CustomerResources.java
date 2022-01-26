@@ -60,7 +60,9 @@ public class CustomerResources {
 	@GetMapping("/find")
 	@Operation(summary="Find customers by name",description="Find customer by name (first name or last name)",tags="{customer}")
 	public ResponseEntity<List<Customer>> findCustomerNameWithLike(@RequestParam String name) {
-		return ResponseEntity.ok(customerService.findNameWithLike(name));
+		List<Customer> customerNameWithLike = customerService.findNameWithLike(name);
+		log.info("Customers by name: {}", customerNameWithLike);
+		return ResponseEntity.ok(customerNameWithLike);
 	}
 	
 	@PostMapping("/create")
@@ -81,6 +83,8 @@ public class CustomerResources {
 	@DeleteMapping("/delete/{cpf}")
 	@Operation(summary="Delete customers by CPF",description="delete customers by CPF",tags="{customer}")
 	public ResponseEntity<Void> removeCustomer(@PathVariable String cpf) {
+		Customer customer = customerService.findById(cpf);
+		log.info("Customer deleted: {}",customer);
 		customerService.delete(cpf);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
