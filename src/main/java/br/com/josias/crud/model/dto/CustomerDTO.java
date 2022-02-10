@@ -1,10 +1,9 @@
 package br.com.josias.crud.model.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import br.com.josias.crud.model.Customer;
+import br.com.josias.crud.model.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,18 +13,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerDTO {
-	@NotNull(message = "The CPF cannot be null")
+	
 	@NotEmpty(message="The CPF cannot be empty")
-	@Size(min = 11,max = 11,message = "CPF format are incorret")
-	@Schema(description = "CPF Number of customer", example = "12345678910", required = true)
+	@Schema(maxLength = 11,minLength = 11,nullable = false,description = "CPF Number of customer", example = "12345678910", required = true)
 	private String cpf;
-	@NotNull(message = "The Name cannot be null")
+	
 	@NotEmpty(message="The Name cannot be empty")
-	@Size(min = 5,max = 50,message = "Name is not valid")
-	@Schema(description = "Name of customer", example = "Josias Junior", required = true)
+	@Schema(maxLength = 50,nullable = false,description = "Name of customer", example = "Josias Junior", required = true)
 	private String name;
 	
-	public Customer toEntity() {
-		return new Customer(cpf,name);
-	}
+	@Email(message = "E-mail is not valid")
+	@NotEmpty(message = "The E-mail cannot be empty")
+	@Schema(maxLength = 100,nullable = false,description = "E-mail of customer", example = "josias@mail.com", required = true)
+	private String email;
+	
+	@Email(message = "Address is not valid")
+	@NotEmpty(message = "The Address cannot be empty")
+	@Schema(nullable = false,description = "Address of customer", required = true)
+	private Address address;
+	
 }

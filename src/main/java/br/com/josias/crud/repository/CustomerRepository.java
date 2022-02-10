@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.josias.crud.model.Customer;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, String> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Customer findByCpf(String cpf);
 	
