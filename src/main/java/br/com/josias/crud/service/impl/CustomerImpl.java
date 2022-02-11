@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.josias.crud.exception.BadRequestException;
 import br.com.josias.crud.model.Address;
 import br.com.josias.crud.model.Customer;
-import br.com.josias.crud.model.dto.AddressDTO;
-import br.com.josias.crud.model.dto.CustomerDTO;
 import br.com.josias.crud.repository.CustomerRepository;
 import br.com.josias.crud.service.CustomerService;
 
@@ -24,10 +22,10 @@ public class CustomerImpl implements CustomerService {
 	private CustomerRepository customerRepository;
 	
 	@Override
-	public Customer findById(Long id) {
+	public Customer findById(String id) {
 		// TODO Auto-generated method stub
 		return customerRepository.findById(id)
-				.orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,"CPF not found"));
+				.orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,"ID not found"));
 	}
 
 	@Override
@@ -38,25 +36,17 @@ public class CustomerImpl implements CustomerService {
 
 	@Transactional
 	@Override
-	public Customer save(CustomerDTO customerDTO, AddressDTO addressDTO) {
+	public Customer save(Customer customer) {
 		// TODO Auto-generated method stub
-		Customer customerToSave = Customer.builder()
-				.cpf(customerDTO.getCpf())
-				.name(customerDTO.getName())
-				.email(customerDTO.getEmail())
-				.address(Address.builder()
-						.street(addressDTO.getStreet())
-						.number(addressDTO.getNumber())
-						.zipCode(addressDTO.getZipCode())
-						.complement(addressDTO.getComplement())
-						.city(addressDTO.getCity())
-						.country(addressDTO.getCountry())
-						.build())
-				.build();
+		Customer customerToSave = new Customer(customer.getCpf(),customer.getName(),customer.getEmail());
 		
-		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11 || !stringIsNumeric(customerDTO.getCpf())) {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "CPF already exists in DB or CPF format are incorret");
-		} else if (customerDTO.getName().length()<5 || !stringIsCharacter(customerDTO.getName())) {
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customerToSave.setAddress(address);
+		address.setCustomer(customerToSave);
+		
+		if (cpfExist(customer.getCpf()) || customer.getCpf().length() != 11 || !stringIsNumeric(customer.getCpf())) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "ID already exists in DB or CPF Number format are incorret");
+		} else if (customer.getName().length()<5 || !stringIsCharacter(customer.getName())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customerToSave);
@@ -64,25 +54,14 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer replace(Long id, CustomerDTO customerDTO, AddressDTO addressDTO) {
+	public Customer replace(Customer customer) {
 		// TODO Auto-generated method stub
-		Customer customerToReplace = Customer.builder()
-				.id(id)
-				.cpf(customerDTO.getCpf())
-				.name(customerDTO.getName())
-				.email(customerDTO.getEmail())
-				.address(Address.builder()
-						.id(id)
-						.street(addressDTO.getStreet())
-						.number(addressDTO.getNumber())
-						.zipCode(addressDTO.getZipCode())
-						.complement(addressDTO.getComplement())
-						.city(addressDTO.getCity())
-						.country(addressDTO.getCountry())
-						.build())
-				.build();
+		Customer customerToReplace = new Customer(customer.getCpf(),customer.getName(),customer.getEmail());
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customerToReplace.setAddress(address);
+		address.setCustomer(customerToReplace);
 		
-		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length()<5) {
+		if (!stringIsCharacter(customer.getName()) || customer.getName().length()<5) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customerToReplace);
@@ -90,7 +69,7 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void delete(String id) {
 		// TODO Auto-generated method stub
 		customerRepository.delete(findById(id));
 	}
@@ -106,9 +85,9 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean cpfExist(String cpf) {
+	public boolean cpfExist(String id) {
 		// TODO Auto-generated method stub
-		return customerRepository.findByCpf(cpf) != null;
+		return customerRepository.findByCpf(id) != null;
 	}
 
 	@Override
