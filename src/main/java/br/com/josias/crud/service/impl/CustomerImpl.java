@@ -38,33 +38,31 @@ public class CustomerImpl implements CustomerService {
 	@Override
 	public Customer save(Customer customer) {
 		// TODO Auto-generated method stub
-		Customer customerToSave = new Customer(customer.getCpf(),customer.getName(),customer.getEmail());
 		
-		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
-		customerToSave.setAddress(address);
-		address.setCustomer(customerToSave);
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customer.setAddress(address);
+		address.setCustomer(customer);
 		
 		if (cpfExist(customer.getCpf()) || customer.getCpf().length() != 11 || !stringIsNumeric(customer.getCpf())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "ID already exists in DB or CPF Number format are incorret");
 		} else if (customer.getName().length()<5 || !stringIsCharacter(customer.getName())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
-			return customerRepository.save(customerToSave);
+			return customerRepository.save(customer);
 		}
 	}
 
 	@Override
 	public Customer replace(Customer customer) {
 		// TODO Auto-generated method stub
-		Customer customerToReplace = new Customer(customer.getCpf(),customer.getName(),customer.getEmail());
-		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
-		customerToReplace.setAddress(address);
-		address.setCustomer(customerToReplace);
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customer.setAddress(address);
+		address.setCustomer(customer);
 		
 		if (!stringIsCharacter(customer.getName()) || customer.getName().length()<5) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
-			return customerRepository.save(customerToReplace);
+			return customerRepository.save(customer);
 		}
 	}
 

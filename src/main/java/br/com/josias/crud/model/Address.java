@@ -55,6 +55,10 @@ public class Address implements Serializable {
 	@NotEmpty
 	private String complement;
 	@Column(length = 100, nullable = false)
+	@Size(max = 100, message = "neighborhood")
+	@NotEmpty
+	private String neighborhood;
+	@Column(length = 100, nullable = false)
 	@Size(max = 100,message = "City is not valid")
 	@NotEmpty
 	private String city;
@@ -71,6 +75,7 @@ public class Address implements Serializable {
 			@Size(min = 8, max = 8, message = "Zip code is not valid") @NotEmpty String zipCode,
 			@Size(max = 5, message = "Number is not valid") @NotEmpty int number,
 			@Size(max = 100, message = "Complement is not valid") @NotEmpty String complement,
+			@Size(max = 100, message = "neighborhood") @NotEmpty String neighborhood,
 			@Size(max = 100, message = "City is not valid") @NotEmpty String city,
 			@Size(min = 2, max = 2, message = "State is not valid") @NotEmpty String state,
 			@Size(max = 100, message = "Country is not valid") @NotEmpty String country) {
@@ -80,6 +85,7 @@ public class Address implements Serializable {
 		this.zipCode = zipCode;
 		this.number = number;
 		this.complement = complement;
+		this.neighborhood = neighborhood;
 		this.city = city;
 		this.state = state;
 		this.country = country;
