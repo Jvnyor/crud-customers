@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
+import br.com.josias.crud.exception.BadRequestException;
+import br.com.josias.crud.model.Address;
 import br.com.josias.crud.model.Customer;
-import br.com.josias.crud.model.dto.CustomerDTO;
 import br.com.josias.crud.repository.CustomerRepository;
 import br.com.josias.crud.service.CustomerService;
 
@@ -22,10 +22,10 @@ public class CustomerImpl implements CustomerService {
 	private CustomerRepository customerRepository;
 	
 	@Override
-	public Customer findById(String cpf) {
+	public Customer findById(String id) {
 		// TODO Auto-generated method stub
-		return customerRepository.findById(cpf)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"CPF not found"));
+		return customerRepository.findById(id)
+				.orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,"ID not found"));
 	}
 
 	@Override
@@ -36,43 +36,56 @@ public class CustomerImpl implements CustomerService {
 
 	@Transactional
 	@Override
-	public Customer save(CustomerDTO customerDTO) {
+	public Customer save(Customer customer) {
 		// TODO Auto-generated method stub
-		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11 || !stringIsNumeric(customerDTO.getCpf())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-		} else if (customerDTO.getName().length()<5 || !stringIsCharacter(customerDTO.getName())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customer.setAddress(address);
+		address.setCustomer(customer);
+		
+		if (cpfExist(customer.getCpf()) || customer.getCpf().length() != 11 || !stringIsNumeric(customer.getCpf())) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "ID already exists in DB or CPF Number format are incorret");
+		} else if (customer.getName().length()<5 || !stringIsCharacter(customer.getName())) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
-			return customerRepository.save(customerDTO.toEntity());
+			return customerRepository.save(customer);
 		}
 	}
 
 	@Override
-	public Customer replace(CustomerDTO customerDTO) {
+	public Customer replace(Customer customer) {
 		// TODO Auto-generated method stub
-		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length()<10) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		customer.setAddress(address);
+		address.setCustomer(customer);
+		
+		if (!stringIsCharacter(customer.getName()) || customer.getName().length()<5) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
-			return customerRepository.save(customerDTO.toEntity());
+			return customerRepository.save(customer);
 		}
 	}
 
 	@Override
-	public void delete(String cpf) {
+	public void delete(String id) {
 		// TODO Auto-generated method stub
-		customerRepository.delete(findById(cpf));
+		customerRepository.delete(findById(id));
 	}
 
 	@Override
 	public List<Customer> findNameWithLike(String name) {
 		// TODO Auto-generated method stub
-		return customerRepository.findNameWithLike(name);
+		if(customerRepository.findNameWithLike(name) != null) {
+			return customerRepository.findNameWithLike(name);
+		} else {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name not found");
+		}
 	}
 
 	@Override
-	public boolean cpfExist(String cpf) {
+	public boolean cpfExist(String id) {
 		// TODO Auto-generated method stub
-		return customerRepository.findByCpf(cpf) != null;
+		return customerRepository.findByCpf(id) != null;
 	}
 
 	@Override
@@ -82,10 +95,10 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean stringIsNumeric(String string) {
+	public boolean stringIsNumeric(String s) {
         boolean isNumeric = true;
-        for (int i = 0; i < string.length(); i++) {
-            if (!Character.isDigit(string.charAt(i))) {
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) {
                 isNumeric = false;
             }
         }
@@ -93,11 +106,11 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean stringIsCharacter(String string) {
+	public boolean stringIsCharacter(String s) {
 		// TODO Auto-generated method stub
 		boolean isCharacter = true;
-        for (int i = 0; i < string.length(); i++) {
-            if (!Character.isAlphabetic(string.charAt(i)) && !Character.isSpaceChar(string.charAt(i))) {
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isAlphabetic(s.charAt(i)) && !Character.isSpaceChar(s.charAt(i))) {
             	isCharacter = false;
             }
         }

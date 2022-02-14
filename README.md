@@ -8,7 +8,7 @@
 
 /customers/list - Return list of all Customers - GET 
 
-/customers/{cpf} - Replace a Customer by Id - PUT
+/customers/replace - Replace a Customer by Id - PUT
 
 /customers/find/{cpf} - Return a Customer by CPF - GET
 
