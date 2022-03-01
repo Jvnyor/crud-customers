@@ -39,7 +39,15 @@ public class CustomerImpl implements CustomerService {
 	public Customer save(Customer customer) {
 		// TODO Auto-generated method stub
 		
-		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		Address address = new Address(customer.getCpf(),
+									  customer.getAddress().getStreet(),
+									  customer.getAddress().getZipCode(),
+									  customer.getAddress().getNumber(),
+									  customer.getAddress().getComplement(),
+									  customer.getAddress().getNeighborhood(),
+									  customer.getAddress().getCity(),
+									  customer.getAddress().getState(),
+									  customer.getAddress().getCountry());
 		customer.setAddress(address);
 		address.setCustomer(customer);
 		
@@ -55,7 +63,16 @@ public class CustomerImpl implements CustomerService {
 	@Override
 	public Customer replace(Customer customer) {
 		// TODO Auto-generated method stub
-		Address address = new Address(customer.getCpf(),customer.getAddress().getStreet(), customer.getAddress().getZipCode(),customer.getAddress().getNumber(),customer.getAddress().getComplement(),customer.getAddress().getNeighborhood(),customer.getAddress().getCity(),customer.getAddress().getState(),customer.getAddress().getCountry());
+		Address address = new Address(customer.getCpf(),
+				  					  customer.getAddress().getStreet(),
+				  					  customer.getAddress().getZipCode(),
+				  					  customer.getAddress().getNumber(),
+				  					  customer.getAddress().getComplement(),
+				  					  customer.getAddress().getNeighborhood(),
+				  					  customer.getAddress().getCity(),
+				  					  customer.getAddress().getState(),
+				  					  customer.getAddress().getCountry());
+		
 		customer.setAddress(address);
 		address.setCustomer(customer);
 		
