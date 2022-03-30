@@ -7,16 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.josias.crud.exception.BadRequestException;
 import br.com.josias.crud.model.Address;
 import br.com.josias.crud.model.Customer;
+import br.com.josias.crud.model.CustomerDTO;
 import br.com.josias.crud.repository.CustomerRepository;
 import br.com.josias.crud.service.CustomerService;
 
 @Service
-public class CustomerImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
@@ -34,26 +34,33 @@ public class CustomerImpl implements CustomerService {
 		return customerRepository.findAll();
 	}
 
-	@Transactional
 	@Override
-	public Customer save(Customer customer) {
+	public Customer save(CustomerDTO customerDTO) {
 		// TODO Auto-generated method stub
+		Customer customer = Customer.builder()
+				.cpf(customerDTO.getCpf())
+				.name(customerDTO.getName())
+				.email(customerDTO.getEmail())
+				.build();
+				
+		Address address = Address.builder()
+				.id(customerDTO.getCpf())
+				.street(customerDTO.getAddress().getStreet())
+				.postalCode(customerDTO.getAddress().getPostalCode())
+				.number(customerDTO.getAddress().getNumber())
+				.addressReference(customerDTO.getAddress().getAddressReference())
+				.neighborhood(customerDTO.getAddress().getNeighborhood())
+				.city(customerDTO.getAddress().getCity())
+				.state(customerDTO.getAddress().getState())
+				.country(customerDTO.getAddress().getCountry())
+				.build();
 		
-		Address address = new Address(customer.getCpf(),
-									  customer.getAddress().getStreet(),
-									  customer.getAddress().getZipCode(),
-									  customer.getAddress().getNumber(),
-									  customer.getAddress().getComplement(),
-									  customer.getAddress().getNeighborhood(),
-									  customer.getAddress().getCity(),
-									  customer.getAddress().getState(),
-									  customer.getAddress().getCountry());
-		customer.setAddress(address);
+		customer.setAddresses(address);
 		address.setCustomer(customer);
 		
-		if (cpfExist(customer.getCpf()) || customer.getCpf().length() != 11 || !stringIsNumeric(customer.getCpf())) {
+		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11 || !stringIsNumeric(customerDTO.getCpf())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "ID already exists in DB or CPF Number format are incorret");
-		} else if (customer.getName().length()<5 || !stringIsCharacter(customer.getName())) {
+		} else if (customerDTO.getName().length()<3 || !stringIsCharacter(customerDTO.getName())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customer);
@@ -61,22 +68,30 @@ public class CustomerImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer replace(Customer customer) {
+	public Customer replace(CustomerDTO customerDTO) {
 		// TODO Auto-generated method stub
-		Address address = new Address(customer.getCpf(),
-				  					  customer.getAddress().getStreet(),
-				  					  customer.getAddress().getZipCode(),
-				  					  customer.getAddress().getNumber(),
-				  					  customer.getAddress().getComplement(),
-				  					  customer.getAddress().getNeighborhood(),
-				  					  customer.getAddress().getCity(),
-				  					  customer.getAddress().getState(),
-				  					  customer.getAddress().getCountry());
+		Customer customer = Customer.builder()
+				.cpf(customerDTO.getCpf())
+				.name(customerDTO.getName())
+				.email(customerDTO.getEmail())
+				.build();
+				
+		Address address = Address.builder()
+				.id(customerDTO.getCpf())
+				.street(customerDTO.getAddress().getStreet())
+				.postalCode(customerDTO.getAddress().getPostalCode())
+				.number(customerDTO.getAddress().getNumber())
+				.addressReference(customerDTO.getAddress().getAddressReference())
+				.neighborhood(customerDTO.getAddress().getNeighborhood())
+				.city(customerDTO.getAddress().getCity())
+				.state(customerDTO.getAddress().getState())
+				.country(customerDTO.getAddress().getCountry())
+				.build();
 		
-		customer.setAddress(address);
+		customer.setAddresses(address);
 		address.setCustomer(customer);
 		
-		if (!stringIsCharacter(customer.getName()) || customer.getName().length()<5) {
+		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length()<3) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customer);

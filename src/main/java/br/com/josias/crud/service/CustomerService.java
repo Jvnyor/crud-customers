@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.josias.crud.model.Customer;
+import br.com.josias.crud.model.CustomerDTO;
 
 @Service
 public interface CustomerService {
@@ -14,8 +15,8 @@ public interface CustomerService {
 	List<Customer> findNameWithLike(String name);
 	Customer findById(String id);
 	List<Customer> listAllNonPageable();
-	Customer save(Customer customer);
-	Customer replace(Customer customer);
+	Customer save(CustomerDTO customer);
+	Customer replace(CustomerDTO customer);
 	void delete(String id);
 	boolean cpfExist(String id);
 	boolean stringIsNumeric(String s);

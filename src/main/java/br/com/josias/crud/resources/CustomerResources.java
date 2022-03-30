@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.josias.crud.model.Customer;
+import br.com.josias.crud.model.CustomerDTO;
 import br.com.josias.crud.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -60,13 +61,13 @@ public class CustomerResources {
 	@PostMapping("/create")
 	@Transactional
 	@Operation(summary="Create customers",description="create customers (have cpf verification)")
-	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Customer> createCustomer(@RequestBody CustomerDTO customer) {
 		return new ResponseEntity<>(customerService.save(customer), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/replace")
 	@Operation(summary="Replace customers",description="replace customers (have cpf verification)")
-	public ResponseEntity<Customer> replaceCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Customer> replaceCustomer(@RequestBody CustomerDTO customer) {
 		return ResponseEntity.ok(customerService.replace(customer));
 	}
 	
