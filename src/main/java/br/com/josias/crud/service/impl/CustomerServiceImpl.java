@@ -20,12 +20,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
-	
+
 	@Override
 	public Customer findById(String id) {
 		// TODO Auto-generated method stub
 		return customerRepository.findById(id)
-				.orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,"ID not found"));
+				.orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST, "ID not found"));
 	}
 
 	@Override
@@ -42,9 +42,8 @@ public class CustomerServiceImpl implements CustomerService {
 				.name(customerDTO.getName())
 				.email(customerDTO.getEmail())
 				.build();
-				
-		Address address = Address.builder()
-				.id(customerDTO.getCpf())
+
+		Address address = Address.builder().id(customerDTO.getCpf())
 				.street(customerDTO.getAddress().getStreet())
 				.postalCode(customerDTO.getAddress().getPostalCode())
 				.number(customerDTO.getAddress().getNumber())
@@ -54,13 +53,15 @@ public class CustomerServiceImpl implements CustomerService {
 				.state(customerDTO.getAddress().getState())
 				.country(customerDTO.getAddress().getCountry())
 				.build();
-		
+
 		customer.setAddresses(address);
 		address.setCustomer(customer);
-		
-		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11 || !stringIsNumeric(customerDTO.getCpf())) {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "ID already exists in DB or CPF Number format are incorret");
-		} else if (customerDTO.getName().length()<3 || !stringIsCharacter(customerDTO.getName())) {
+
+		if (cpfExist(customerDTO.getCpf()) || customerDTO.getCpf().length() != 11
+				|| !stringIsNumeric(customerDTO.getCpf())) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST,
+					"ID already exists in DB or CPF Number format are incorret");
+		} else if (customerDTO.getName().length() < 3 || !stringIsCharacter(customerDTO.getName())) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customer);
@@ -75,7 +76,7 @@ public class CustomerServiceImpl implements CustomerService {
 				.name(customerDTO.getName())
 				.email(customerDTO.getEmail())
 				.build();
-				
+
 		Address address = Address.builder()
 				.id(customerDTO.getCpf())
 				.street(customerDTO.getAddress().getStreet())
@@ -87,11 +88,11 @@ public class CustomerServiceImpl implements CustomerService {
 				.state(customerDTO.getAddress().getState())
 				.country(customerDTO.getAddress().getCountry())
 				.build();
-		
+
 		customer.setAddresses(address);
 		address.setCustomer(customer);
-		
-		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length()<3) {
+
+		if (!stringIsCharacter(customerDTO.getName()) || customerDTO.getName().length() < 3) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name size or name format are incorret");
 		} else {
 			return customerRepository.save(customer);
@@ -107,7 +108,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Customer> findNameWithLike(String name) {
 		// TODO Auto-generated method stub
-		if(customerRepository.findNameWithLike(name) != null) {
+		if (customerRepository.findNameWithLike(name) != null) {
 			return customerRepository.findNameWithLike(name);
 		} else {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Name not found");
@@ -128,24 +129,24 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public boolean stringIsNumeric(String s) {
-        boolean isNumeric = true;
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isDigit(s.charAt(i))) {
-                isNumeric = false;
-            }
-        }
-        return isNumeric;
+		boolean isNumeric = true;
+		for (int i = 0; i < s.length(); i++) {
+			if (!Character.isDigit(s.charAt(i))) {
+				isNumeric = false;
+			}
+		}
+		return isNumeric;
 	}
 
 	@Override
 	public boolean stringIsCharacter(String s) {
 		// TODO Auto-generated method stub
 		boolean isCharacter = true;
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isAlphabetic(s.charAt(i)) && !Character.isSpaceChar(s.charAt(i))) {
-            	isCharacter = false;
-            }
-        }
+		for (int i = 0; i < s.length(); i++) {
+			if (!Character.isAlphabetic(s.charAt(i)) && !Character.isSpaceChar(s.charAt(i))) {
+				isCharacter = false;
+			}
+		}
 		return isCharacter;
 	}
 

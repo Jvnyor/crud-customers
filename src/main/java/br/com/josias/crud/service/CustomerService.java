@@ -12,13 +12,22 @@ import br.com.josias.crud.model.CustomerDTO;
 @Service
 public interface CustomerService {
 	Page<Customer> listAllPageable(Pageable pageable);
+
 	List<Customer> findNameWithLike(String name);
+
 	Customer findById(String id);
+
 	List<Customer> listAllNonPageable();
+
 	Customer save(CustomerDTO customer);
+
 	Customer replace(CustomerDTO customer);
+
 	void delete(String id);
+
 	boolean cpfExist(String id);
+
 	boolean stringIsNumeric(String s);
+
 	boolean stringIsCharacter(String s);
 }

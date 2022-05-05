@@ -13,8 +13,8 @@ import br.com.josias.crud.model.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
 	Customer findByCpf(String cpf);
-	
-	@Query(value="select * from customer where name like %:name%",nativeQuery=true)
+
+	@Query(value = "select * from customer where name like %:name%", nativeQuery = true)
 	List<Customer> findNameWithLike(@Param("name") String name);
 
 }

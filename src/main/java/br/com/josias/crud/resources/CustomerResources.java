@@ -32,47 +32,47 @@ public class CustomerResources {
 
 	@Autowired
 	private CustomerService customerService;
-	
+
 	@GetMapping
-	@Operation(summary="List of all Customers paginated",description="List of all customers paginated")
+	@Operation(summary = "List of all Customers paginated", description = "List of all customers paginated")
 	public ResponseEntity<Page<Customer>> listAllCustomersPageable(@ParameterObject Pageable pageable) {
 		return ResponseEntity.ok(customerService.listAllPageable(pageable));
 	}
-	
+
 	@GetMapping("/list")
-	@Operation(summary="List of all Customers",description="List of all customers")
+	@Operation(summary = "List of all Customers", description = "List of all customers")
 	public ResponseEntity<List<Customer>> listAllCustomersNonPageable() {
 		return ResponseEntity.ok(customerService.listAllNonPageable());
 	}
-	
+
 	@GetMapping("/find/{id}")
-	@Operation(summary="Find customer by ID (CPF)",description="Find customer by ID (CPF)")
+	@Operation(summary = "Find customer by ID (CPF)", description = "Find customer by ID (CPF)")
 	public ResponseEntity<Customer> findCustomerByCpf(@PathVariable String id) {
 		return ResponseEntity.ok(customerService.findById(id));
 	}
-	
+
 	@GetMapping("/find")
-	@Operation(summary="Find customers by name",description="Find customer by name (first name or last name)")
+	@Operation(summary = "Find customers by name", description = "Find customer by name (first name or last name)")
 	public ResponseEntity<List<Customer>> findCustomerNameWithLike(@RequestParam String name) {
 		List<Customer> customerNameWithLike = customerService.findNameWithLike(name);
 		return ResponseEntity.ok(customerNameWithLike);
 	}
-	
+
 	@PostMapping("/create")
 	@Transactional
-	@Operation(summary="Create customers",description="create customers (have cpf verification)")
+	@Operation(summary = "Create customers", description = "create customers (have cpf verification)")
 	public ResponseEntity<Customer> createCustomer(@RequestBody CustomerDTO customer) {
 		return new ResponseEntity<>(customerService.save(customer), HttpStatus.CREATED);
 	}
-	
+
 	@PutMapping("/replace")
-	@Operation(summary="Replace customers",description="replace customers (have cpf verification)")
+	@Operation(summary = "Replace customers", description = "replace customers (have cpf verification)")
 	public ResponseEntity<Customer> replaceCustomer(@RequestBody CustomerDTO customer) {
 		return ResponseEntity.ok(customerService.replace(customer));
 	}
-	
+
 	@DeleteMapping("/delete/{id}")
-	@Operation(summary="Delete customers by ID",description="delete customers by ID")
+	@Operation(summary = "Delete customers by ID", description = "delete customers by ID")
 	public ResponseEntity<Void> removeCustomer(@PathVariable String id) {
 		customerService.delete(id);
 		return new ResponseEntity<>(HttpStatus.OK);

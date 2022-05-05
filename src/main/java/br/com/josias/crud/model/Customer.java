@@ -22,24 +22,21 @@ public class Customer implements Serializable {
 	/**
 	 * @author Josias Junior https://github.com/Jvnyor
 	 */
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@Column(name = "id",unique=true,nullable = false, length = 11)
+	@Column(name = "id", unique = true, nullable = false, length = 11)
 	@NotEmpty
 	private String cpf;
-	
+
 	@NotEmpty
 	private String name;
-	
+
 	@Email(message = "E-mail is not valid")
 	private String email;
-	
-	@OneToOne(
-			fetch = FetchType.LAZY,
-			cascade = CascadeType.ALL,
-			mappedBy = "customer")
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customer")
 	private Address addresses;
 
 }

@@ -5,14 +5,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class BadRequestException extends ResponseStatusException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public BadRequestException(HttpStatus status, String reason) {
 		super(status, reason);
-		// TODO Auto-generated constructor stub
 	}
-	
+
 }
